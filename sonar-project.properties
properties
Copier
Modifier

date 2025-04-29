@@ -1,0 +1,4 @@
+sonar.projectKey=intervention
+sonar.projectName=Intervention
+sonar.host.url=http://localhost:9000
+sonar.login=sqa_67159f07eb1b5b5a2130f4b59602a8aaeabe5a0e
