@@ -7,7 +7,8 @@ pipeline {
     }
 
     environment {
-        SONARQUBE_ENV = 'SonarQube_Server' // Nom configuré dans Jenkins
+        JAVA_HOME = tool(name: 'jdk-17', type: 'jdk')
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
@@ -21,7 +22,7 @@ pipeline {
         stage('Analyse SonarQube') {
             steps {
                 echo '🔍 Analyse du code avec SonarQube...'
-                withSonarQubeEnv("${env.SONARQUBE_ENV}") {
+                withSonarQubeEnv('SonarQube_Server') {
                     sh 'mvn sonar:sonar'
                 }
             }
@@ -30,7 +31,6 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 echo '🧪 Vérification du Quality Gate...'
-                // Attendre la réponse du serveur Sonar
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
