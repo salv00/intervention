@@ -6,16 +6,13 @@ pipeline {
         jdk 'jdk-17'
     }
 
-    environment {
-        JAVA_HOME = tool(name: 'jdk-17', type: 'jdk')
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
-    }
-
     stages {
         stage('Build & Test') {
             steps {
                 echo '🧱 Compilation et tests unitaires...'
-                sh 'mvn clean verify'
+                withEnv(["JAVA_HOME=${tool 'jdk-17'}", "PATH+JAVA=${tool 'jdk-17'}/bin"]) {
+                    sh 'mvn clean verify'
+                }
             }
         }
 
@@ -23,7 +20,9 @@ pipeline {
             steps {
                 echo '🔍 Analyse du code avec SonarQube...'
                 withSonarQubeEnv('SonarQube_Server') {
-                    sh 'mvn sonar:sonar'
+                    withEnv(["JAVA_HOME=${tool 'jdk-17'}", "PATH+JAVA=${tool 'jdk-17'}/bin"]) {
+                        sh 'mvn sonar:sonar'
+                    }
                 }
             }
         }
